@@ -1,11 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto } from './dto/update-table.dto';
+import { Table } from './entities/table.entity';
 
 @Injectable()
 export class TableService {
-  create(createTableDto: CreateTableDto) {
-    return 'This action adds a new table';
+  constructor(private prismaService: PrismaService) {}
+
+  async create(createTableDto: CreateTableDto): Promise<Table> {
+    const tableExists = await this.prismaService.table.findUnique({
+      where: { number: createTableDto.number },
+    });
+
+    if (tableExists) {
+      throw new ConflictException('Mesa já cadastrada, informe outro número');
+    }
+
+    return await this.prismaService.table.create({
+      data: createTableDto,
+    });
   }
 
   findAll() {
