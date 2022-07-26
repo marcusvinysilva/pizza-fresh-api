@@ -43,8 +43,14 @@ export class ProductController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  @ApiOperation({
+    summary: 'Atualizar um produto por seu ID',
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    return this.productService.update(id, updateProductDto);
   }
 
   @Delete(':id')
