@@ -13,7 +13,11 @@ async function bootstrap() {
     .setDescription('Aplicação para a gestão de uma pizzaria')
     .setVersion('1.0.0')
     .addTag('status')
+    .addTag('auth')
     .addTag('table')
+    .addTag('product')
+    .addTag('user')
+    .addTag('order')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
