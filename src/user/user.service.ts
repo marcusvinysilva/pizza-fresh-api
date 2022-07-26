@@ -55,8 +55,16 @@ export class UserService {
     return userList;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<User> {
+    const userExists = await this.prismaService.user.findUnique({
+      where: { id },
+    });
+
+    if (!userExists) {
+      throw new NotFoundException(`Usuário ${id} não encontrado`);
+    }
+
+    return userExists;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
