@@ -24,7 +24,7 @@ export class AuthService {
     });
 
     if (!userExists) {
-      throw new NotFoundException('Usuário não encontrado');
+      throw new NotFoundException('Credenciais inválidas');
     }
 
     const isHashValid = await bcrypt.compare(password, userExists.password);
