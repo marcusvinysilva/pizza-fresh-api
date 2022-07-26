@@ -27,7 +27,10 @@ export class ProductController {
   }
 
   @Get()
-  findAll() {
+  @ApiOperation({
+    summary: 'Listar todos os produtos',
+  })
+  findAll(): Promise<Product[]> {
     return this.productService.findAll();
   }
 
