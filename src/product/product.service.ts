@@ -28,8 +28,16 @@ export class ProductService {
     return this.prismaService.product.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string): Promise<Product> {
+    const productExists = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+
+    if (!productExists) {
+      throw new ConflictException(`Produto ${id} não encontrado`);
+    }
+
+    return productExists;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

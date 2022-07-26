@@ -35,8 +35,11 @@ export class ProductController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  @ApiOperation({
+    summary: 'Listar um produto por seu ID',
+  })
+  findOne(@Param('id') id: string): Promise<Product> {
+    return this.productService.findOne(id);
   }
 
   @Patch(':id')
