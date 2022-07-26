@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ChangeItemOrderDto } from './dto/change-item-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
 import { OrderService } from './order.service';
@@ -31,5 +32,13 @@ export class OrderController {
   })
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);
+  }
+
+  @Patch('add-item')
+  @ApiOperation({
+    summary: 'Adicionar um ou mais itens ao pedido',
+  })
+  addItem(@Body() changeItemOrderDto: ChangeItemOrderDto) {
+    return this.orderService.addItem(changeItemOrderDto);
   }
 }

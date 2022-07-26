@@ -2,10 +2,13 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ChangeItemOrderDto } from './dto/change-item-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
+import { Status } from './entities/status.entity';
 
 @Injectable()
 export class OrderService {
@@ -77,5 +80,56 @@ export class OrderService {
     }
 
     return orderExists;
+  }
+
+  private async canOrderBeProcessed(changeItemOrderDto: ChangeItemOrderDto) {
+    const orderExists = await this.prismaService.order.findUnique({
+      where: { id: changeItemOrderDto.orderId },
+      include: {
+        user: true,
+        table: true,
+        products: true,
+      },
+    });
+
+    if (!orderExists) {
+      throw new NotFoundException(
+        `Pedido ${changeItemOrderDto.orderId} não encontrado`,
+      );
+    }
+
+    if (changeItemOrderDto.productsId.length === 0) {
+      throw new UnprocessableEntityException('Não há itens disponíveis.');
+    }
+
+    if (orderExists.status === Status.CLOSED) {
+      throw new ForbiddenException('Pedido está fechado');
+    }
+  }
+
+  async addItem(changeItemOrderDto: ChangeItemOrderDto) {
+    await this.canOrderBeProcessed(changeItemOrderDto);
+
+    const updatedOrder = await this.prismaService.order.update({
+      where: { id: changeItemOrderDto.orderId },
+      data: {
+        products: {
+          connect: changeItemOrderDto.productsId.map((item) => ({
+            id: item,
+          })),
+        },
+      },
+      include: {
+        products: true,
+      },
+    });
+
+    let orderTotal = 0;
+
+    updatedOrder.products.map((item) => {
+      orderTotal += item.price;
+    });
+
+    return { updatedOrder, orderTotal };
   }
 }
