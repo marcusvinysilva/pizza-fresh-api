@@ -43,8 +43,14 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @ApiOperation({
+    summary: 'Atualizar um usuário pelo seu ID',
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')

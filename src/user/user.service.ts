@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -67,8 +68,44 @@ export class UserService {
     return userExists;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const userIdExists = await this.prismaService.user.findUnique({
+      where: { id },
+    });
+
+    if (!userIdExists) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const userNicknameExists = await this.prismaService.user.findUnique({
+      where: { nickname: updateUserDto.nickname },
+    });
+
+    if (
+      !userNicknameExists ||
+      (userNicknameExists &&
+        userNicknameExists.nickname === updateUserDto.nickname)
+    ) {
+      if (updateUserDto.password !== updateUserDto.passwordConfirm) {
+        throw new ForbiddenException('Senhas não conferem');
+      }
+
+      const hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+
+      return await this.prismaService.user.update({
+        data: {
+          name: updateUserDto.name,
+          nickname: updateUserDto.nickname,
+          password: hashedPassword,
+          image: updateUserDto.image,
+        },
+        where: { id },
+      });
+    } else {
+      throw new UnprocessableEntityException(
+        'Já existe um usuário com esse nickname, nenhuma alteração realizada',
+      );
+    }
   }
 
   remove(id: number) {
