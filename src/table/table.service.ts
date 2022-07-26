@@ -76,7 +76,17 @@ export class TableService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} table`;
+  async remove(id: string): Promise<Table> {
+    const tableExists = await this.prismaService.table.findUnique({
+      where: { id },
+    });
+
+    if (!tableExists) {
+      throw new NotFoundException(`Mesa ${id} não encontrada`);
+    }
+
+    return await this.prismaService.table.delete({
+      where: { id },
+    });
   }
 }
