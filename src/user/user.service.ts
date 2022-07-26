@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -44,8 +45,14 @@ export class UserService {
     return createdUser;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(): Promise<User[]> {
+    const userList = await this.prismaService.user.findMany();
+
+    if (userList.length === 0) {
+      throw new NotFoundException('Não há usuários cadastrados');
+    }
+
+    return userList;
   }
 
   findOne(id: number) {
