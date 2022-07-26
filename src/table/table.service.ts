@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto } from './dto/update-table.dto';
@@ -26,8 +30,16 @@ export class TableService {
     return this.prismaService.table.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} table`;
+  async findOne(id: string): Promise<Table> {
+    const tableExists = await this.prismaService.table.findUnique({
+      where: { id },
+    });
+
+    if (!tableExists) {
+      throw new NotFoundException(`Mesa ${id} não encontrada`);
+    }
+
+    return tableExists;
   }
 
   update(id: number, updateTableDto: UpdateTableDto) {

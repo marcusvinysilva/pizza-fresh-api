@@ -35,8 +35,11 @@ export class TableController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tableService.findOne(+id);
+  @ApiOperation({
+    summary: 'Listar uma mesa por seu ID',
+  })
+  findOne(@Param('id') id: string): Promise<Table> {
+    return this.tableService.findOne(id);
   }
 
   @Patch(':id')
