@@ -1,11 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(private prismaService: PrismaService) {}
+
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+    const productExists = await this.prismaService.product.findUnique({
+      where: { name: createProductDto.name },
+    });
+
+    if (productExists) {
+      throw new ConflictException(
+        'Produto com o mesmo nome já cadastrado, informe outro nome',
+      );
+    }
+
+    return await this.prismaService.product.create({
+      data: createProductDto,
+    });
   }
 
   findAll() {
