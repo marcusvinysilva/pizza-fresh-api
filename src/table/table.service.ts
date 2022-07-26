@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTableDto } from './dto/create-table.dto';
@@ -42,8 +43,37 @@ export class TableService {
     return tableExists;
   }
 
-  update(id: number, updateTableDto: UpdateTableDto) {
-    return `This action updates a #${id} table`;
+  async update(id: string, updateTableDto: UpdateTableDto): Promise<Table> {
+    const tableIdExists = await this.prismaService.table.findUnique({
+      where: { id },
+    });
+
+    if (!tableIdExists) {
+      throw new NotFoundException(
+        `Mesa ${updateTableDto.number} não encontrada`,
+      );
+    }
+
+    if (!updateTableDto.number) {
+      throw new UnprocessableEntityException(
+        'Número não informado, nenhuma alteração realizada',
+      );
+    }
+
+    const tableNumberExists = await this.prismaService.table.findUnique({
+      where: { number: updateTableDto.number },
+    });
+
+    if (!tableNumberExists) {
+      return await this.prismaService.table.update({
+        data: { number: updateTableDto.number },
+        where: { id },
+      });
+    } else {
+      throw new UnprocessableEntityException(
+        'Já existe uma mesa com esse número, nenhuma alteração realizada',
+      );
+    }
   }
 
   remove(id: number) {

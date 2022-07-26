@@ -43,8 +43,14 @@ export class TableController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTableDto: UpdateTableDto) {
-    return this.tableService.update(+id, updateTableDto);
+  @ApiOperation({
+    summary: 'Atualizar uma mesa por seu ID',
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateTableDto: UpdateTableDto,
+  ): Promise<Table> {
+    return this.tableService.update(id, updateTableDto);
   }
 
   @Delete(':id')
