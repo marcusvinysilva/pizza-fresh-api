@@ -54,7 +54,10 @@ export class ProductController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  @ApiOperation({
+    summary: 'Deletar um produto por seu ID',
+  })
+  remove(@Param('id') id: string): Promise<Product> {
+    return this.productService.remove(id);
   }
 }
