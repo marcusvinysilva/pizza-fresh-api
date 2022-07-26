@@ -5,6 +5,9 @@ export class CreateTableDto {
   @IsPositive()
   @IsNotEmpty()
   @IsNumber()
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O número da mesa',
+    example: 1,
+  })
   number: number;
 }
