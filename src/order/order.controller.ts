@@ -41,4 +41,12 @@ export class OrderController {
   addItem(@Body() changeItemOrderDto: ChangeItemOrderDto) {
     return this.orderService.addItem(changeItemOrderDto);
   }
+
+  @Patch('remove-item')
+  @ApiOperation({
+    summary: 'Remover um ou mais itens do pedido',
+  })
+  removeItem(@Body() changeItemOrderDto: ChangeItemOrderDto) {
+    return this.orderService.removeItem(changeItemOrderDto);
+  }
 }

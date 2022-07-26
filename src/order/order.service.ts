@@ -132,4 +132,30 @@ export class OrderService {
 
     return { updatedOrder, orderTotal };
   }
+
+  async removeItem(changeItemOrderDto: ChangeItemOrderDto) {
+    await this.canOrderBeProcessed(changeItemOrderDto);
+
+    const updatedOrder = await this.prismaService.order.update({
+      where: { id: changeItemOrderDto.orderId },
+      data: {
+        products: {
+          disconnect: changeItemOrderDto.productsId.map((item) => ({
+            id: item,
+          })),
+        },
+      },
+      include: {
+        products: true,
+      },
+    });
+
+    let orderTotal = 0;
+
+    updatedOrder.products.map((item) => {
+      orderTotal += item.price;
+    });
+
+    return { updatedOrder, orderTotal };
+  }
 }
