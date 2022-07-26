@@ -18,6 +18,9 @@ export class OrderController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Listar todos os pedidos',
+  })
   findAll() {
     return this.orderService.findAll();
   }

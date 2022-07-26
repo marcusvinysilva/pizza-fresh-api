@@ -46,8 +46,20 @@ export class OrderService {
     });
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll() {
+    const orderList = await this.prismaService.order.findMany({
+      include: {
+        user: true,
+        products: true,
+        table: true,
+      },
+    });
+
+    if (orderList.length === 0) {
+      throw new NotFoundException('Não há pedidos cadastrados');
+    }
+
+    return orderList;
   }
 
   findOne(id: number) {
