@@ -62,7 +62,20 @@ export class OrderService {
     return orderList;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: string) {
+    const orderExists = await this.prismaService.order.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        table: true,
+        products: true,
+      },
+    });
+
+    if (!orderExists) {
+      throw new NotFoundException(`Pedido ${id} não encontrado`);
+    }
+
+    return orderExists;
   }
 }

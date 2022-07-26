@@ -26,7 +26,10 @@ export class OrderController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Listar um pedido pelo ID',
+  })
   findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+    return this.orderService.findOne(id);
   }
 }
