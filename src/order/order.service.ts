@@ -158,4 +158,39 @@ export class OrderService {
 
     return { updatedOrder, orderTotal };
   }
+
+  async closeOrder(id: string) {
+    const orderExists = await this.prismaService.order.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        table: true,
+        products: true,
+      },
+    });
+
+    if (!orderExists) {
+      throw new NotFoundException(`Pedido ${id} não encontrado`);
+    }
+
+    const updatedOrder = await this.prismaService.order.update({
+      where: { id },
+      data: {
+        status: 'CLOSED',
+      },
+      include: {
+        user: true,
+        table: true,
+        products: true,
+      },
+    });
+
+    let orderTotal = 0;
+
+    updatedOrder.products.map((item) => {
+      orderTotal += item.price;
+    });
+
+    return { updatedOrder, orderTotal };
+  }
 }

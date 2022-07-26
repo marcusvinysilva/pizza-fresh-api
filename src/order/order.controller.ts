@@ -49,4 +49,12 @@ export class OrderController {
   removeItem(@Body() changeItemOrderDto: ChangeItemOrderDto) {
     return this.orderService.removeItem(changeItemOrderDto);
   }
+
+  @Patch('close-order/:id')
+  @ApiOperation({
+    summary: 'Fechar um pedido',
+  })
+  closeOrder(@Param('id') id: string) {
+    return this.orderService.closeOrder(id);
+  }
 }
