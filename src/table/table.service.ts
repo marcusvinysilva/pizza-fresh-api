@@ -22,8 +22,8 @@ export class TableService {
     });
   }
 
-  findAll() {
-    return `This action returns all table`;
+  findAll(): Promise<Table[]> {
+    return this.prismaService.table.findMany();
   }
 
   findOne(id: number) {

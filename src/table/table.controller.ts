@@ -27,7 +27,10 @@ export class TableController {
   }
 
   @Get()
-  findAll() {
+  @ApiOperation({
+    summary: 'Listar todas as mesas',
+  })
+  findAll(): Promise<Table[]> {
     return this.tableService.findAll();
   }
 
