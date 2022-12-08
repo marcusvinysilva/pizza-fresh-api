@@ -44,6 +44,8 @@ Para utilizar o Pizza Fresh, execute o comando:
 - [Pizza Fresh (Vercel)](https://pizza-fresh-client.vercel.app)
 - [Documentação do Pizza Fresh (Swagger)](https://pizza-fresh-server-h8ng.onrender.com/api)
 
+  Obs: Antes de acessar a aplicação na `Vercel`, crie um usuário através do endpoint `create user` pelo `Swagger`.
+
 ## 🤝 Colaboradores
 
 - **Marcus Silva** - [Github](https://github.com/marcusvinysilva) | [Linkedin](https://www.linkedin.com/in/marcusvinysilva/)
