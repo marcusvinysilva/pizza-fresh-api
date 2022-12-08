@@ -41,8 +41,8 @@ Para utilizar o Pizza Fresh, execute o comando:
 
 ## 💻 Links
 
-- [Pizza Fresh (Netlify)](https://pizzafreshclient.netlify.app)
-- [Documentação do Pizza Fresh (Swagger)](https://pizzafreshserver.herokuapp.com/api)
+- [Pizza Fresh (Vercel)](https://pizza-fresh-client.vercel.app)
+- [Documentação do Pizza Fresh (Swagger)](https://pizza-fresh-server-h8ng.onrender.com/api)
 
 ## 🤝 Colaboradores
 
